@@ -234,14 +234,6 @@ void select_wb(void)
         if(nvm_base[NVM_SAVE_SAT] != nvm_base[NVM_SAT])
             nvm_base[NVM_SAVE_SAT] = nvm_base[NVM_SAT]; 
 	} 
-	
-	asm volatile (
-		".word 0x202d2d2d\n" //--- 
-		".word 0x20545543\n" //CUT 
-		".word 0x45524548\n" //HERE
-		".word 0x2d2d2d20\n" //--- 
-	);
-	
 	return;
 }
 

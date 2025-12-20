@@ -116,51 +116,16 @@ do {                                            \
 } while(0)
 
 
-#define TEXT_SUB 0
-
-#if TEXT_SUB 
-void draw_text(uint8_t *plane, int p, int w, int h, int x, int y, char *txt, int col)
-{
-	asm volatile (
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-	);
-    
-    DRAW_TEXT(plane,p,w,h,x,y,txt,col);     
-    return;
-	asm volatile (
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-	);
-} 
-#endif
- 
 
 void calc_histogram(void)
 {
-#if TEXT_SUB == 0
 	asm volatile (
 		".word 0x202d2d2d\n" //--- 
 		".word 0x20545543\n" //CUT 
 		".word 0x45524548\n" //HERE
 		".word 0x2d2d2d20\n" //--- 
 	);
-	
-	asm volatile (
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-		".word 0x00000000\n"
-	);
-#endif
-				
+
 	int* frameno = (int *)0x80f8214c; //frame counter
 	uint16_t *histogram_stats = (uint16_t *)  0x85bf0100; // was 85bf0100
 	uint8_t  *histo_rgb_image = 0;// = (uint8_t *) (0x85bf0000 - (HIST_PITCH * HIST_HEIGHT * 3)); // was 85bf0500  (seems to effect the encoder buffer.)
@@ -423,13 +388,8 @@ void calc_histogram(void)
     uint8_t *planeB = histo_rgb_image + HIST_PITCH * HIST_HEIGHT * 2;
     
     int ypos = 4;
-#if TEXT_SUB 
-    draw_text(planeR, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    draw_text(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-#else
     DRAW_TEXT(planeR, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
     DRAW_TEXT(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-#endif
     ypos += FH+1;
 
     if(*enc_frames > 0 && *enc_frames < 100000)
@@ -483,13 +443,8 @@ void calc_histogram(void)
             text[15] = '[';
             text[18] = ']';
         }
-    #if TEXT_SUB 
-        draw_text(planeR, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 128);
-        draw_text(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    #else
         DRAW_TEXT(planeR, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 128);
         DRAW_TEXT(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    #endif
         ypos += FH+1;
     
     
@@ -520,13 +475,8 @@ void calc_histogram(void)
             text[4] = '[';
             text[7] = ']';
         }
-    #if TEXT_SUB
-        draw_text(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-        draw_text(planeB, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 200);
-    #else
         DRAW_TEXT(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
         DRAW_TEXT(planeB, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 200);
-    #endif
         ypos += FH+1;
     
         if(current_Qp[0] > 50) current_Qp[0]=50;
@@ -553,14 +503,9 @@ void calc_histogram(void)
         
         if(nvm_base[NVM_QPMIN]-1 > current_Qp[0])
             current_Qp[0] = nvm_base[NVM_QPMIN]-1;
-            
-    #if TEXT_SUB
-        draw_text(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 200);
-        draw_text(planeB, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    #else
+          
         DRAW_TEXT(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 200);
         DRAW_TEXT(planeB, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    #endif
         ypos += FH+1;
     } 
     else
@@ -583,13 +528,8 @@ void calc_histogram(void)
         text[pos++] =  (window_res[1] % 10) + '0';
         text[pos++] = 0;
         
-    #if TEXT_SUB
-        draw_text(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 200);
-        draw_text(planeB, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    #else
         DRAW_TEXT(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 200);
         DRAW_TEXT(planeB, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    #endif
         ypos += FH+1;
         
         
@@ -612,13 +552,8 @@ void calc_histogram(void)
         text[pos++] =  (window_res[3] % 10) + '0';
         text[pos++] = 0;
         
-    #if TEXT_SUB
-        draw_text(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 120);
-        draw_text(planeB, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    #else
         DRAW_TEXT(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 120);
         DRAW_TEXT(planeB, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    #endif
         ypos += FH+1;
     }
     
@@ -656,13 +591,8 @@ void calc_histogram(void)
         text[18] = ']';
     }
     
-#if TEXT_SUB 
-    draw_text(planeR, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
-    draw_text(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 200);
-#else
     DRAW_TEXT(planeR, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 255);
     DRAW_TEXT(planeG, HIST_PITCH, HIST_PITCH, HIST_HEIGHT, HIST_WIDTH+4, ypos, text, 200);
-#endif
     ypos += FH+1;
     
 /* looking for memory pattern
@@ -972,6 +902,5 @@ void calc_histogram(void)
 int main(void)
 {
     calc_histogram();
-
     return 0;
 }
