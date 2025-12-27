@@ -99,7 +99,7 @@ void select_wb(void)
                 
         uint32_t* whitebal = &nvm_base[NVM_WBAL];
 	    uint32_t* sharpness = &nvm_base[NVM_SHARPEN];
-	    uint32_t* saturation = &nvm_base[NVM_SAT];
+	    uint32_t* saturation = &nvm_base[NVM_SAT];       
         
         if(nvm_base[NVM_FREE] == 0) // reset to zero on a FW update.
         {
